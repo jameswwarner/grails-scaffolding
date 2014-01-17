@@ -1,0 +1,1283 @@
+/* Copyright (c) 2013-2014 James W. Warner, All Rights Reserved */
+
+// Main CSS: Site styling for a specific theme
+
+@import "common";
+
+/* /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+    
+    TABLE OF CONTENTS:
+
+        COMMON STUFF
+            FUNCTIONAL MIXINS
+            STYLE & BUTTON MIXINS
+            STRUCTURAL MIXINS
+            TARGETED MIXINS
+            BASE ELEMENTS & LIKENESSES
+            SHARED CLASSES & SMALLER ELEMENTS
+            LOGIN BOX
+
+        HEADER TOP BAR, SUBNAV & SNAPSHOTS
+            HEADER TOP BAR
+            SUBNAV
+            SNAPSHOT SETUP
+            PRODUCT SNAPSHOT
+            PROFILE SNAPSHOT
+            LOOK SNAPSHOT
+        
+        PAGE SPECIFIC STYLES
+            PAGE SIGNUP
+            PAGE GATEWAY
+            PAGE ABOUT
+            PAGE TEAM
+            PAGE CONTACT
+            PAGE DEFAULTS
+
+        CLIENT OVERRIDES & HACKS
+            EXTRAS
+
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/ */
+
+
+
+
+
+
+
+
+
+
+                                        /* -------------------------------------------
+
+
+                                                         COMMON STUFF
+
+
+                                        ---------------------------------------------- */
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    FUNCTIONAL MIXINS
+--------------------------------------------------------------------------------------------------------------------- */
+.NestedBlockImage() {
+    // to be used under a container element whose width is set specifically
+    img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }
+}
+.NestedBlockImg() {
+    .NestedBlockImage(); // just in case it's misspelled.
+}
+.BlankIconBg(@bgW: auto; @bgH: auto) {
+    // @bgW = set background width
+    // @bgH = set background height
+    // purposely doesn't define "background-image: none" just in case of a CSS specificity issues
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-size: @bgW @bgH;
+}
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    STYLE & BUTTON MIXINS
+--------------------------------------------------------------------------------------------------------------------- */
+.CommonBoxShadow() {
+    box-shadow: 3px 3px 15px -5px black;
+}
+.Border3D() {
+    border-left: 1px solid white;
+    border-right: 1px solid white;
+    border-top: 1px solid white;
+    border-bottom: 1px solid darken(@oceanColor, 4%);
+}
+.SnazzyCircle(@radius: 20px) {
+    .Font16;
+    .FontCursive;
+    display: inline-block;
+    width: @radius;
+    height: @radius;
+    line-height: @radius;
+    text-align: center;
+    color: white;
+    background-color: black;
+    border-radius: 50%;
+}
+
+.Button(@bgColor: silver) {
+    @bgLite: lighten(@bgColor, 6%);
+    .BlankIconBg(auto; 1.25em);
+    .Font12;
+    .FontCaps;
+    background-color: @bgColor;
+    background-position: right center;
+    line-height: 1.6em;
+    position: relative;
+    display: inline-block;
+    text-align: left;
+    font-weight: bold;
+    color: black;
+    padding: @gapXS @gapXL @gapXS 0;
+    border-right: 8px solid @bgColor;
+    border-left: 10px solid @bgColor;
+    margin: @gapXS 0;
+    cursor: pointer;
+    &:hover {
+        background-color: @bgLite;
+        border-color: @bgLite;
+    }
+    &.grayed-out, &.next-disabled {
+        opacity: 0.5;
+        color: @oceanColor / 3;
+        background-color: darkgray;
+        border-color: darkgray;
+        cursor: default;
+        pointer-events: none;
+        &:hover {
+            background-color: darkgray;
+            border-color: darkgray;
+        }
+    }
+}
+.InverseButton(@bgColor: black) {
+    @bgLite: lighten(@bgColor, 23%);
+    .Button(@bgColor);
+    color: white;
+    letter-spacing: 2px;
+    &:hover {
+        background-color: @bgLite;
+        border-color: @bgLite;
+    }
+    &.grayed-out, &.next-disabled {
+        opacity: 0.5;
+        color: darkgray;
+        background-color: @oceanColor / 3;
+        border-color: @oceanColor / 3;
+        &:hover {
+            background-color: @oceanColor / 3;
+            border-color: @oceanColor / 3;
+        }
+    }
+}
+
+// ButtonAddons don't inlcude .Button(), but override some aspects. This protects CSS inheritance for Button styles.
+.FlipButtonAddon() {
+    background-position: 8px center;
+    padding-left: @gapXL;
+    padding-right: 0;
+    border-left-width: 8px;
+    border-right-width: 10px;
+}
+.FullWidthButtonAddon() {
+    // don't add width = 100% or clear = both. they break other things down the line.
+    display: block;
+    float: none; // submit button gets floated. if this is added after it will override.
+}
+.NoImageButtonAddon() {
+    border-left-width: 10px;
+    border-right-width: 10px;
+    text-align: center;
+    padding-right: 0;
+    padding-left: 0;
+}
+
+
+.GoButton() {
+    .Button(@goColor);
+    background-image: url(../../images/key/theme1/icon-arrow-right.png);
+}
+.FacebookButton() {
+    .InverseButton(@facebookColor);
+    background-image: url(../../images/key/theme1/social-fb-white.png);
+    background-position: right center;
+    border-right-width: 10px;
+}
+.SubmitButton() {
+    .InverseButton();
+    float: right;
+    margin-top: 2px;
+}
+.CloseButton() {
+    .InverseButton();
+    background-image: url(../../images/key/theme1/icon-close-grey.png);
+}
+.LinkButton() {
+    .Button(white);
+    padding: 0;
+    background-image: none;
+    line-height: 1.2em;
+    border-bottom: 1px dotted dimgray;
+    &:hover {
+        border-bottom: solid;
+    }
+}
+
+.SeeAllLink() {
+    > * {
+        .BlankIconBg(auto; 1em);
+        padding-right: @gapLG;
+        cursor: pointer;
+        color: inherit;
+        border: 0; // overrides an anchor-tag style
+        &:hover {
+            border: 0;
+            color: dimgray;
+        }
+    }
+    > .icon-arrow-right {
+        background-image: url(../../images/key/theme1/icon-arrow-right.png);
+    }
+}
+
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    STRUCTURAL MIXINS
+--------------------------------------------------------------------------------------------------------------------- */
+.SimpleColumns(@imgW: 120px; @gap: @gapLG) {
+    // @imgW = set the width of image
+    .FloatEndgame();
+    > div:first-of-type {
+        // treats first div as img column
+        float: left;
+        width: @imgW;
+        .NestedBlockImage();
+    }
+    > div:nth-of-type(2), > div[class*="submit"] {
+        // treats second & submit divs as second column (these are also usually the last divs)
+        margin-right: 0;
+        margin-left: @imgW + @gap;
+    }
+}
+.SimpleColumnsReverse(@imgW: 120px; @gap: @gapLG) {
+    // reverses column structure
+    .SimpleColumns(@imgW; @gap);
+    > div:first-of-type {
+        float: right;
+    }
+    > div:nth-of-type(2), > div[class*="submit"] {
+        margin-left: 0;
+        margin-right: @imgW + @gap;
+    }
+}
+.ContentBox(@boxW: 100%) {
+    .FloatEndgame();
+    .Font14;
+    width: @boxW;
+    margin: 50px auto;
+    h2 {
+        font-size: inherit;
+        margin-bottom: @gapSM;
+        margin-top: @gapMD;
+        color: @oceanColor / 2;
+    }
+    h3 {
+        .Font14;
+        .FontCaps;
+        font-weight: 700;
+        color: black;
+    }
+    h4 {
+        margin: 0;
+    }
+    hr {
+        margin: @gapLG 0;
+    }
+    > .column-half {
+        width: 49%;
+        &:nth-of-type(2n-1) {
+            float: right;
+        }
+        &:nth-of-type(2n) {
+            .FloatEndgame();
+            float: left;
+        }
+    }
+}
+.SectionWrapper() {
+    .FloatEndgame();
+    width: @pageW;
+    margin: 0 auto;
+}
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    TARGETED MIXINS
+--------------------------------------------------------------------------------------------------------------------- */
+.SaveBox() {
+    .Font12;
+    .FloatEndgame();
+    display: none;
+    background: whitesmoke;
+    border: 1px solid silver;
+    padding: @gapMD;
+}
+
+.SearchBox(@searchW: auto; @queryW: 200px; @h: 32px) {
+    background-color: white;
+    border: 1px solid gainsboro;
+    box-sizing: content-box;
+    color: gray;
+    margin-top: @gapSM;
+    margin-bottom: 40px;
+    width: @searchW;
+    .search-query {
+        display: inline-block;
+        height: @h;
+        vertical-align: middle;
+        width: @queryW;
+        border: 0;
+    }
+    .search-action {
+        display: inline-block;
+        height: @h / 2;
+        opacity: 0.7;
+        vertical-align: middle;
+        cursor: pointer;
+        margin: 0 0 0 @gapSM;
+        &:hover {
+            opacity: 1.0;
+        }
+    }
+}
+
+.Sidebar() {
+    .Font13;
+    .FontRegularCaps;
+    position: relative;
+    background-color: transparent;
+    border-top: 2px solid silver;
+    padding: @gapSM 0;
+    margin-bottom: @gapSM;
+    font-weight: 400;
+    line-height: 1.5em;
+    color: black;
+}
+.SidebarLabel() {
+    .Font12;
+    .FontCaps;    
+    font-weight: bold;
+    line-height: 36px;
+    margin-top: 0;
+    margin-bottom: @gapSM;
+    color: dimgray;
+}
+
+.StarkBar(@barH: 40px) {
+    text-align: center;
+    color: white;
+    background-color: black;
+    height: @barH;
+    line-height: @barH;
+    padding: 0 @gapSM;
+    a {
+        color: white;
+        text-decoration: none;
+    }
+    span {
+        line-height: @barH;
+    }
+    img {
+        max-height: @barH / 2.5;
+        vertical-align: middle;
+        margin-top: -4px;
+    }
+    .side-left {
+        float: left;
+        min-width: 25%;
+        height: @barH;
+        line-height: @barH;
+        text-align: left;
+    }
+    .side-right {
+        float: right;
+        min-width: 25%;
+        height: @barH;
+        line-height: @barH;
+        text-align: right;
+    }
+}
+.HarpoonBar(@barH: 25px) {
+    .Font12;
+    .FontCaps;
+    @borderW: 3px;
+    height: @barH;
+    font-weight: 900;
+    text-align: center;
+    border-top: @borderW solid dimgray;
+    margin-bottom: @gapSM;
+    clear: both;
+    z-index: 2;
+    .bar-content {
+        position: relative;
+        top: (@barH + @borderW) / -2;
+        display: inline-block;
+        height: @barH;
+        line-height: @barH;
+        color: white;
+        background-color: black;
+        padding: 0 30px;
+        img {
+            height: @barH * 0.5;
+            vertical-align: middle;
+            margin-right: @gapSM;
+            margin-top: @borderW / -2;
+        }
+    }
+}
+
+
+.LegalScrollBox() {
+    .Font12;
+    height: 400px;
+    overflow-y: auto;
+    border: 1px solid black;
+    padding: @gapSM @gapMD;
+    margin-bottom: @gapLG;
+    &::-webkit-scrollbar {
+        width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+        background-color: silver;
+    }
+    &::-webkit-scrollbar-thumb {
+        background-color: dimgray;
+        border-radius: 4px;
+    }
+    h1 {
+        .Font15;
+        .FontRegularCaps;
+        font-weight: bold;
+        text-align: left;
+        letter-spacing: 0;
+        margin-bottom: @gapSM;
+        padding-bottom: @gapXS;
+
+    }
+    h2 {
+        .Font13;
+        color: black;
+        margin-top: @gapXL;
+    }
+    p {
+        margin-bottom: @gapMD;
+    }
+    p.timestamp {
+        margin-top: 50px;
+        color: @oceanColor / 2;
+    }
+    p.moresimplyput {
+//        padding-left: @gapSM;
+//        border-left: 3px solid darken(@oceanColor, 6%);
+    }
+}
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    BASE ELEMENTS & LIKENESSES 
+--------------------------------------------------------------------------------------------------------------------- */
+body {
+    .FontModern;
+    .Font18;
+}
+a, .faux-link {
+    text-decoration: none;
+    color: black;
+    border-bottom: 1px dotted dimgray;
+    cursor: pointer;
+    &:visited {
+        color: black;
+    }
+    &:hover {
+        border-bottom-style: solid;
+    }
+    &.plain {
+        &:hover {
+            border: 0;
+        }
+    }
+}
+h1.snazzy {
+    .Font40;
+    .FontCursive;
+    font-weight: 400;
+    letter-spacing: -1px;
+    text-transform: lowercase;
+    border: 0;
+    margin: @gapSM 0 @gapXS 0;
+}
+h2.snazzy {
+    text-align: center;
+    .Font14;
+    font-weight: 600;
+    letter-spacing: 2px;
+    margin-bottom: @gapMD;
+}
+input {
+    height: 30px;
+    .Font15;
+    color: dimgray;
+    border-color: dimgray;
+    border-radius: 1px;
+    outline: none;
+}
+textarea {
+    margin: 0;
+    max-width: 100%;
+}
+
+
+#section-body-wrapper {
+    width: @pageW;
+    min-height: 550px;
+    margin: 0 auto 80px auto;
+    h1 {
+        .Font18;
+        .FontCaps;
+        font-weight: 400;
+        text-align: center;
+        border-bottom: 1px solid silver;
+        padding: @gapLG 0 3px 0;
+        margin-bottom: @gapXS;
+    }
+}
+#section-footer-wrapper {
+    clear: both;
+    #section-footer {
+        width: @pageW;
+        .Font11;
+        .FontCaps;
+        color: dimgray;
+        border-top: 1px solid silver;
+        padding: @gapSM 0 50px 0;
+        margin: 0 auto;
+        #footer-left {
+            float: left;
+            width: 25%;
+        }
+        #footer-middle {
+            float: left;
+            width: 50%;
+            text-align: center;
+            .nav-bar-light {
+                display: block;
+                margin-bottom: 3px;
+            }
+        }
+        #footer-right {
+            float: left;
+            width: 25%;
+            text-align: right;
+        }
+    }
+}
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    SHARED CLASSES & SMALLER ELEMENTS
+--------------------------------------------------------------------------------------------------------------------- */
+.content-box-narrow {
+    .ContentBox(40%);
+}
+.content-box {
+    .ContentBox(60%);
+}
+.content-box-wide {
+    .ContentBox(80%);
+}
+.content-box-full {
+    .ContentBox(100%);
+}
+
+
+.stark-bar-small {
+    .StarkBar(30px);
+}
+.stark-bar {
+    .StarkBar(40px);
+}
+.stark-bar-large {
+    .StarkBar(50px);
+}
+
+.social-share {
+    display: inline-block;
+    line-height: 0;
+    > div {
+        display: inline-block;
+        padding-left: @gapSM;
+        vertical-align: top;
+    }
+    .fb-like {
+        > span {
+            margin-bottom: 2px;
+        }
+    }
+}
+
+
+#au-avatar_uploader {
+    .qq-upload-button {
+        .Button();
+        .NoImageButtonAddon();
+        display: inline-block;
+        white-space: nowrap;
+        width: auto;
+    }
+    .qq-upload-list {
+        margin: @gapSM 0 0;
+        list-style: none;
+        li {
+            margin: 0;
+            background-color: darken(@oceanColor, 3%);
+            padding: @gapXS @gapSM;
+        }
+    }
+}
+
+// styling for loading image
+.loading.top.center {
+    background: @seeMoreColor;
+    padding: 2px 10px 4px 10px;
+    -webkit-border-bottom-right-radius: 5px;
+    -webkit-border-bottom-left-radius: 5px;
+    -moz-border-radius-bottomright: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+
+.SettingsInput() {
+    .Font12;
+    .FontCaps;
+    font-weight: 600;
+    margin-bottom: 3px;
+    input, textarea {
+        display: block;
+        width: 50%;
+        margin-bottom: 15px;
+    }
+    .input-caption {
+        .FontRegularCaps;
+        margin-top: -12px;
+        margin-bottom: 15px;
+        font-weight: 400;
+    }
+}
+
+/* ------------------------------------------------------------------------------------------------------------------
+    LOGIN BOX - flyover on each page
+--------------------------------------------------------------------------------------------------------------------- */
+#login-box-wrapper {
+    position: fixed;
+    z-index: 600;
+    top: 0;
+    left: 0;
+    width: 100%;
+    .login-box {
+        .SimpleColumns(370px);
+        .CommonBoxShadow();
+        width: 740px;
+        margin: 85px auto 0;
+        height: 420px;
+        background-color: white;
+        > div {
+            padding: 40px;
+            .login-logo {
+                margin-bottom: 40px;
+            }
+            h1 {
+                .FontModern;
+                .Font20;
+                .FontCaps;
+                font-style: normal;
+                font-weight: bold;
+                line-height: 45px; // height of logo
+                text-align: center;
+            }
+            ul {
+                list-style: none;
+                padding: 0;
+            }
+            &.login-left {
+                background-color: black;
+                height: 100%;
+                color: white;
+                li {
+                    .BlankIconBg(40px);
+                    .Font13;
+                    .FontCaps;
+                    line-height: 1.3em;
+                    padding: @gapSM 0 @gapSM 60px;
+                    margin-bottom: @gapMD;
+                    background-position: left center;
+                }
+            }
+            &.login-right {
+                margin-left: 370px;
+                h1 {
+                    background-color: transparent;
+                }
+                p {
+                    margin-bottom: @gapXS;
+                }
+                #signin-facebook {
+                    margin-top: 50px;
+                    .facebook-login {
+                        .FullWidthButtonAddon();
+                        .Font14;
+                        padding-top: 8px;
+                        padding-bottom: 8px;
+                        border-left-width: @gapMD;
+                        border-right-width: @gapMD;
+                        margin-bottom: @gapXL;
+                    }
+                    #email-instead {
+                        border-top: 1px solid silver;
+                        p {
+                            margin-top: 10px;
+                            .Font12;
+                            .FontCaps;
+                            font-weight: 600;
+                            color: red;
+                        }
+                        a, span {
+                            .Font12;
+                        }
+                    }
+                }
+                #signin-email {
+                    margin-top: 20px;
+                    #signin-error {
+                        .Font12;
+                        color: @wowColor;
+                    }
+                    label {
+                        .SettingsInput();
+                        input {
+                            width: 100%;
+                        }
+                    }
+                    #email-signin-submit {
+                        .Button();
+                        background-image: url(../../images/key/theme1/icon-arrow-right.png);
+                    }
+                    .signin-alt {
+                        p {
+                            .Font12;
+                            .FontCaps;
+                            font-weight: 600;
+                            display: inline-block; 
+                        }
+                        a, span {
+                            .Font12;
+                        }
+                    }
+                }
+                #signin-forgot {
+                    margin-top: 50px;
+                    #forgot-message {
+                        .Font12;
+                        color: @wowColor;
+                        margin-bottom: 10px;
+                    }
+                    p {
+                        .Font14;
+                        .FontCaps;
+                        font-weight: 600;
+                        margin-bottom: 20px;
+                    }
+                    label {
+                        .SettingsInput();
+                        input {
+                            width: 100%;
+                        }
+                    }
+                    #forgot-submit {
+                        .Button();
+                        background-image: url(../../images/key/theme1/icon-arrow-right.png);
+                        margin-bottom: 10px;
+                    }
+                    span {
+                        .Font12;
+                    }
+                }
+            }
+        }
+    }
+}
+
+#screen-dim {
+    background-color: rgb(100,100,100);
+    opacity: 0.6;
+}
+
+
+
+
+
+
+
+
+
+                                        /* -------------------------------------------
+
+
+                                                HEADER TOP BAR, SUBNAV & SNAPSHOTS
+
+
+                                        ---------------------------------------------- */
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    HEADER TOP BAR
+--------------------------------------------------------------------------------------------------------------------- */
+@headerTopBarH: 55px;
+#section-header-wrapper {
+    width: 100%;
+    background-color: black;
+
+    #section-header {
+        width: @pageW;
+        height: @headerTopBarH;
+        margin: 0 auto;
+        display: table;
+
+        .header-menu-item {
+            padding: 0 @gapLG;
+            &.header-menu-selected {
+                background-color: @oceanColor / 3; // comes close to #4D4D4D
+            }
+            &:hover {
+                background-color: @oceanColor / 4.5; // comes close to #333
+            }
+        }
+        > div {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            border-right: 1px solid silver;
+            height: @headerTopBarH;
+            line-height: 0.9em;
+            white-space: nowrap;
+            a, span {
+                color: white;
+                .Font12;
+                .FontCaps;
+                font-weight: 600;
+                text-decoration: none;
+                border-bottom: none;
+            }
+            img {
+                height: 20px;
+            }
+
+            &#top-bar-intro {
+                border-right: none;
+                padding-left: @gapSM;
+                padding-right: @gapLG;
+                text-align: left;
+                img {
+                    padding-right: 4px;
+                    &.intro-logo {
+                        padding-right: 16px;
+                    }
+                }
+            }
+
+            &#top-bar-home {
+                padding-left: 12px;
+                padding-right: 12px;
+            }
+
+            &#top-bar-brands {
+                border-right: 0;
+                padding-right: @gapLG + 1; // design detail. removing the border makes it feel awkward. adding this 1px helps.
+            }
+
+            &#top-bar-profile {
+                height: @headerTopBarH;
+                padding-left: 0;
+                a, span {
+                    display: table-cell;
+                    vertical-align: middle;
+                    cursor: pointer;
+                    img {
+                        height: @headerTopBarH;
+                        float: left;
+                    }
+                    &:last-child {
+                        text-align: left;
+                        padding-left: 17px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    SUBNAV
+--------------------------------------------------------------------------------------------------------------------- */
+@subnavBarH: 35px;
+@subnavSearchW: 200px;
+#subnav-bg {
+    position: absolute;
+    top: @headerTopBarH;
+    left: 0;
+    box-sizing: content-box;
+    background-color: @oceanColor;
+    border-bottom: 1px solid darken(@oceanColor, 4%);
+    margin-bottom: @gapLG;
+    height: @subnavBarH;
+    width: 100%;
+}
+#subnav-bar {
+    position: relative;
+    height: @subnavBarH;
+    padding: 0;
+    border: 0;
+    margin-bottom: 50px;
+    #header-search {
+        .SearchBox();
+        position: absolute;
+        top: 1px;
+        left: 0;
+        border-width: 0;
+        border-bottom-width: 2px;
+        margin: 0;
+    }
+    .subnav-menu {
+        position: absolute;
+        top: 6px;
+        left: @subnavSearchW + 25px;
+        display: inline-block;
+        margin-left: auto;
+        margin-right: auto;
+        list-style: none;
+        .Font14;
+        .FontRegularCaps;
+        li {
+            cursor: pointer;
+            display: inline-block;
+            margin-right: 36px;
+            font-weight: 500;
+            &.select-active {
+                border-bottom: 1px solid black;
+            }
+            &:hover {
+                border-bottom: 1px dotted black;
+            }
+        }
+    }
+    .nav-bar-small {
+        position: absolute;
+        top: 9px;
+        right: 0;
+        img {
+            height: 18px;
+            vertical-align: middle;
+            & + img {
+                display: none;
+            }
+        }
+        &:hover {
+            img {
+                display: none;
+                & + img {
+                    display: inline;
+                }
+            }
+        }
+        li.drop-down {
+            .BlankIconBg(13px; auto);
+            position: relative;
+            padding: 0 0 0 @gapLG;
+            background-image: url(../../images/key/theme1/icon-expandable-extend.png);
+            background-position: left center;
+            &:hover {
+                background-image: url(../../images/key/theme1/icon-expandable-extend-hover.png);
+            }
+            > ul {
+                .FloatEndgame();
+                box-shadow: 0 0 3em rgba(0, 0, 0, 0.3);
+                top: 25px;
+                left: auto;
+                right: 0;
+                li {
+                    margin: 0;
+                    a, span {
+                        width: 160px;
+                        cursor: pointer;
+                        line-height: 1.2em;
+                        color: black;
+                        padding: 8px @gapMD;
+                        margin: 0;
+                        &:hover {
+                            color: white;
+                            background-color: black;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+                                        /* -------------------------------------------
+
+
+                                                    PAGE SPECIFIC STYLES
+
+
+                                        ---------------------------------------------- */
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    PAGE GATEWAY 
+--------------------------------------------------------------------------------------------------------------------- */
+#page-gateway {
+}
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    PAGE ABOUT
+--------------------------------------------------------------------------------------------------------------------- */
+@aboutIntroBoxW: 500px;
+#page-about {
+    h1 {
+        border: 0;
+    }
+    .about-header {
+        .Font16;
+        .FontCaps;
+        font-weight: 800;
+    }
+
+    .about-intro {
+        position: relative;
+        margin-bottom: 30px;
+        .intro-box {
+            position: absolute;
+            top: 70px;
+            left: 50%;
+            margin-left: -@aboutIntroBoxW / 2;
+            width: @aboutIntroBoxW;
+            line-height: 1.5em;
+            .Font18;
+            letter-spacing: 1px;
+            font-weight: 300;
+            color: whitesmoke;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 30px 40px;
+            .box-header {
+                .Font22;
+                .FontCaps;
+                letter-spacing: 4px;
+                font-weight: 600;
+                color: white;
+                margin-bottom: @gapSM;
+            }
+        }
+        img {
+            width: 100%;
+            border-top: 1px solid silver;
+            border-bottom: 2px solid black;
+        }
+    }
+
+    .about-body {
+        .FloatEndgame();
+        margin-bottom: 30px;
+        .body-description {
+            float: left;
+            width: 50%;
+            padding-right: 40px;
+        }
+        .body-steps {
+            float: right;
+            width: 50%;
+            padding-left: 30px;
+            .step {
+                background-color: whitesmoke;
+                padding: @gapXS @gapLG;
+                margin-bottom: @gapSM;
+                div {
+                    display: inline-block;
+                    vertical-align: middle;
+                    .Font16;
+                    margin-right: @gapMD;
+                    &:first-child {
+                        .Font32;
+                        .FontCursive;
+                        font-weight: 600;
+                    }
+                }
+                .icon {
+                    .ImageCenterpiece(50px; 50px; @gapSM);
+                    background-color: white;
+                    border-radius: 8px;
+                }
+            }
+        }
+    }
+
+    .about-footer {
+        border-top: 2px solid silver;
+        padding-top: 30px;
+        .about-header {
+            margin-bottom: @gapMD;
+        }
+        img {
+            width: 100%;
+        }
+    }
+}
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    PAGE USER SETTIGNS
+--------------------------------------------------------------------------------------------------------------------- */
+#page-settings {
+    #email-settings {
+        .settings-item {
+            width: 90%;
+            border-bottom: 1px solid darken(@oceanColor, 6%);
+            padding-bottom: @gapSM;
+            margin-bottom: @gapSM;
+            label {
+                font-weight: bold;
+                margin-bottom: 0;
+            }
+            input[type="radio"] {
+                vertical-align: middle;
+                margin: 0 2px 0 @gapMD;
+                &:first-of-type {
+                    margin-left: 0;
+                }
+            }
+        }
+    }
+}
+
+
+#save-password-button {
+    .Button();
+    background-image: url(../../images/key/theme1/icon-arrow-right.png);
+}
+
+#page-change-password {
+    .content-box {
+        #password-message {
+            color: @wowColor;
+            margin-bottom: 10px;
+        }
+        label {
+            .SettingsInput();
+        }
+    }
+}
+
+#page-reset-password {
+    .content-box {
+        label {
+            .SettingsInput();
+        }
+        #password-reset {
+            color: @wowColor;
+            margin-top: 10px;
+        }
+    }
+}
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    PAGE DEFAULTS
+--------------------------------------------------------------------------------------------------------------------- */
+#page-default {
+    .legal-scroll-box {
+       .LegalScrollBox();
+    }
+}
+
+
+
+
+
+
+
+
+                                        /* -------------------------------------------
+
+
+                                                    CLIENT OVERRIDES & HACKS
+
+
+                                        ---------------------------------------------- */
+
+
+
+
+
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    EXTRAS
+--------------------------------------------------------------------------------------------------------------------- */
+@-moz-document url-prefix() {
+    #page-product {
+        .column2 {
+            .product-item-selector {
+                select {
+                    background-position: -9999px -9999px !important;
+                }
+            }
+        }
+    }
+}
+
+#hub-link {
+    .Button();
+    .NoImageButtonAddon();
+    .Transform(-90deg);
+    position: absolute;
+    line-height: 29px;
+    top: 132px;
+    right: -47px;
+    z-index: 999;
+}
+
+
+

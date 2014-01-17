@@ -1,0 +1,476 @@
+/* Copyright (c) 2013-2014 James W. Warner, All Rights Reserved */
+
+// Common CSS: Website styling independent of any particular theme
+
+//Map of z-index value:
+//   600s - Dialogs
+//   500s - Flyovers (login/register/forgot)
+//   400s - Screen overlays (modal)
+//   300s - Drop-downs (cart)
+//   200s - Pop-ups/hovers (help bubbles)
+//   100s - Floating navigation tools (pagination arrows)
+//     <0 - Backgrounds
+
+@import "reset";
+@import "generic"; // generic already imports fonts.less
+@import "mobile";
+
+
+/* ------------------------------------------------------------------------------------------------------------------
+    COMMON VARIABLES
+--------------------------------------------------------------------------------------------------------------------- */
+@pageW: 960px;
+
+@gapBase: 5px; // use @gap* variables for padding and margins only. seems safer when changing the numbers down the line. try not to use @gapBase
+@gapXS: @gapBase;
+@gapSM: @gapBase * 2;
+@gapMD: @gapBase * 3;
+@gapLG: @gapBase * 4;
+@gapXL: @gapBase * 6;
+
+// COLORS
+@hoverColor: blue;
+@oceanColor: lightblue;
+@goColor: red;
+@wowColor: crimson;
+@collectColor: #FF0A47; // reds
+@facebookColor: #249ad5;
+@snoopColor: #c9c; // purples
+@seeMoreColor: #ffcb75; // yellows
+
+html {
+    .FontBaseSize;
+}
+
+.TextLink(@hoverColor) {
+    cursor: pointer;
+    border-bottom: 1px solid;
+    &:hover {
+        color: @hoverColor;
+    }
+}
+
+.CurledCorners {
+    position: relative;
+    &:before , &:after {
+        z-index: -1;
+        position: absolute;
+        content: "";
+        bottom: 15px;
+        left: 10px;
+        width: 50%;
+        top: 80%;
+        max-width: 300px;
+        background: #777;
+        -webkit-box-shadow: 0 15px 10px #777;
+        -moz-box-shadow: 0 15px 10px #777;
+        box-shadow: 0 15px 10px #777;
+        -webkit-transform: rotate(-3deg);
+        -moz-transform: rotate(-3deg);
+        -o-transform: rotate(-3deg);
+        -ms-transform: rotate(-3deg);
+        transform: rotate(-3deg);
+    }
+
+    &:after {
+        -webkit-transform: rotate(3deg);
+        -moz-transform: rotate(3deg);
+        -o-transform: rotate(3deg);
+        -ms-transform: rotate(3deg);
+        transform: rotate(3deg);
+        right: 10px;
+        left: auto;
+    }
+}
+
+.ButtonCore(@textColor; @bgColor; @textHoverColor; @bgHoverColor; @borderHoverColor) {
+    font-family: sans-serif;
+    .FontCaps;
+    font-weight: 900;
+    color: @textColor;
+    background-color: @bgColor;
+    background-image: none;
+    border: 2px solid @bgColor !important;
+    border-radius: 20px;
+    padding: 1px @gapMD;
+    &:hover {
+        color: @textHoverColor;
+        background-color: @bgHoverColor;
+        border-color: @borderHoverColor !important;
+    }
+}
+
+@dimOpacity: 0.8;
+#screen-dim {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 5000px;
+    height: 5000px;
+    background-color: black;
+    opacity: @dimOpacity;
+    z-index: 400;
+}
+
+@unsupportedBrowserW: 400px;
+#unsupported-browser {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 400px;
+    text-align: center;
+    .Font14;
+    color: black;
+    background-color: white;
+    border: 1px solid black;
+    padding: @gapLG @gapXL @gapLG @gapXL;
+    margin: 110px 0 0 -(@unsupportedBrowserW / 2);
+    z-index: 500;
+    h1 {
+        .Font18;
+        .FontRegularCaps;
+        color: white;
+        background-color: black;
+        padding: @gapSM 0;
+        margin: -@gapLG -@gapXL @gapLG;
+    }
+
+    .browser-box {
+        zoom: 1;
+        display: inline-block;
+        .Font10;
+        padding: @gapXS @gapSM;
+        &:hover {
+            background-color: gainsboro;
+        }
+
+        a {
+            background-color: transparent;
+        }
+
+        img {
+            width: 80px;
+        }
+    }
+}
+
+.masked {
+    overflow: hidden;
+}
+
+.image-activate {
+    display: none;
+}
+
+#status-msg {
+    text-align: right;
+    color: firebrick;
+}
+
+.error-msg {
+    vertical-align: baseline;
+    text-align: left;
+    color: firebrick;
+    &:after {
+        content: @codeNoBreakSpace;
+    }
+}
+
+
+.DropDown(@indentAdjust: 0) {
+    cursor: default;
+    z-index: 300;
+    > a {
+        &:hover {
+            border-color: transparent;
+        }
+    }
+
+    ul {
+        display: none;
+        position: absolute;
+        left: 0;
+        list-style-type: none;
+        background-color: white;
+        border: 1px solid black;
+        border-top: none;
+        padding: 0;
+        margin-left: @indentAdjust;
+        &:first-child {
+            margin-left: 0;
+        }
+
+        li {
+            border-top: 1px solid black;
+            &:hover {
+                a, span {
+                    color: white;
+                    background-color: black;
+                }
+            }
+
+            a, span {
+                display: block;
+                text-align: left;
+                border: 0;
+                padding: 3px @gapMD;
+            }
+        }
+    }
+}
+
+.NavBar(@itemGapG: @gapSM) {
+    display: inline-block;
+    list-style-type: none;
+    white-space: nowrap;
+    margin: 0;
+    padding: 0;
+    > li {
+        display: inline-block;
+        position: relative;
+        list-style-type: none;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 0 0 2px @itemGapG;
+        &:first-child {
+            padding-left: 0;
+        }
+
+        a, span {
+            outline: none;
+            text-decoration: none;
+            color: black;
+        }
+
+        > a, span {
+            border-bottom: 3px solid transparent;
+            &:hover {
+                background-color: white;
+                border-color: inherit;
+            }
+        }
+
+        &.drop-down {
+            .DropDown (@itemGapG);
+        }
+    }
+}
+
+.NavBarDividers(@itemGapG: @gapSM) {
+    > li + li:before {
+        content: "|";
+    }
+
+    > li {
+        > a , > span {
+            margin-left: @itemGapG;
+        }
+    }
+}
+
+ul.nav-bar-sub {
+    @itemGapG: @gapLG;
+    .NavBar (@itemGapG);
+    .NavBarDividers (@itemGapG);
+    > li a {
+        .FontCursive;
+        .Font16;
+        letter-spacing: 0;
+        text-transform: lowercase;
+    }
+}
+
+ul.nav-bar-small {
+    @itemGapG: @gapLG;
+    .NavBar (@itemGapG);
+    .Font12;
+    > li {
+        a, span {
+            border-bottom: 2px solid transparent;
+        }
+    }
+}
+
+ul.nav-bar-light {
+    @itemGapG: @gapSM;
+    .NavBar (@itemGapG);
+    .NavBarDividers (@itemGapG);
+    .Font10;
+    color: silver;
+    > li a {
+        letter-spacing: 2px;
+        color: dimgray;
+    }
+
+    > li a:hover {
+        color: black;
+    }
+}
+
+ul.nav-bar-dark {
+    @itemGapG: @gapSM;
+    .NavBar (@itemGapG);
+    .NavBarDividers (@itemGapG);
+    .Font12;
+    color: white;
+    background-color: black;
+    > li a {
+        letter-spacing: 2px;
+        color: white;
+        &:hover {
+            background-color: black;
+        }
+    }
+}
+
+
+span.dialog-action {
+    .TextLink (white);
+}
+
+#page-error {
+    .Font12;
+    padding: 50px 100px;
+    background-color: whitesmoke;
+    h1 {
+        .Font22;
+        .FontCaps;
+        border-bottom: 1px solid silver;
+        margin-bottom: @gapXL;
+    }
+
+    .stack {
+        height: auto;
+        word-wrap: break-word;
+        background-color: white;
+    }
+}
+
+/*@facebookBlue: rgb(59, 89, 152);
+.facebook-login {
+    display: inline-block;
+    .Font14;
+    .FontCaps;
+    font-weight: 600;
+    color: white;
+    background: @facebookBlue url(../../images/key/theme1/social-fb-white.png) no-repeat 25px 10px;
+    background-size: auto 18px;
+    border-radius: 5px;
+    padding: @gapSM 18px 8px 50px;
+    cursor: pointer;
+    &:hover {
+        background-color: lighten(@facebookBlue, 10%);
+    }
+}
+*/
+.HoverBorder(@clickable: false) when (@clickable) {
+    &:hover {
+        border-color: black;
+    }
+}
+
+.FacebookBkgnd(@imgW: 40px; @imgH: 40px; @fauxURL; @clickable: false) {
+    display: inline-block;
+    width: @imgW;
+    height: @imgH;
+    background-color: silver;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+    background-image: url(@fauxURL);
+    border: 1px solid silver;
+    margin-right: 1px;
+    .HoverBorder(@clickable);
+}
+
+.reveal-msg {
+    cursor: pointer;
+    .msg-status {
+        padding-left: @gapMD;
+        background-repeat: no-repeat;
+        background-position: center right;
+        background-image: url(../../images/key/general/icon-reveal-hidden.png);
+        background-size: auto 10px;
+    }
+
+    .msg-status.shown {
+        background-image: url(../../images/key/general/icon-reveal-shown.png);
+        background-size: 10px auto;
+    } 
+
+    .msg-body {
+        display: none;
+    }
+}
+
+#uvTab {
+    background-image: none !important;
+    a {
+        padding: 6px @gapSM 2px @gapSM !important;
+    }
+}
+
+.dialog {
+    display: none;
+    .dialog-error-msg {
+        clear: both;
+        color: firebrick;
+        padding-top: @gapLG;
+    }
+}
+
+.JCarousel(@sliderW; @sliderH) {
+    position: relative;
+    overflow: hidden;
+    width: @sliderW;
+    height: @sliderH;
+    ul {
+        width: 20000em;
+        position: absolute;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        li {
+            float: left;
+        }
+    }
+}
+
+#fix-ie {
+    body {
+        background-color: white;
+    }
+
+    input {
+        font-family: sans-serif;
+    }
+
+    #screen-dim {
+        @dimOpacity100: @dimOpacity * 100;
+        -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=@dimOpacity100)";
+        filter: alpha(opacity=@dimOpacity100);
+    }
+
+    .welcome-box {
+        background-color: white;
+    }
+
+    .facebook-login {
+        background-image: none;
+        padding-left: @gapLG;
+    }
+
+    .help-me-msg {
+        .help-me-msg-inner {
+            .help-me-msg-body {
+                background-color: white;
+            }
+        }
+    }
+}
+
+#fix-ie9 {
+}
+

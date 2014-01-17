@@ -1,0 +1,149 @@
+/* Copyright (c) 2013-2014 James W. Warner, All Rights Reserved */
+
+@import "common";
+
+/* Baseline */
+body {
+    .FontPlain;
+    .Font14;
+    color: dimgray;
+    margin: @gapLG 50px;
+}
+a {
+    text-decoration: none;
+    color: dimgray;
+    border-bottom: 1px dotted steelblue;
+}
+a:visited {
+    color: darkgray;
+}
+a:hover {
+    color: white;
+    background-color: steelblue;
+    outline: 2px solid steelblue;
+}
+h1 {
+    font-family: "Chango", sans-serif;
+    font-size: 240%;
+}
+h4 {
+    margin-bottom: @gapSM;
+}
+
+/* Color blocks */
+.Block(@color) {
+    background-color: white;
+    border: 2px solid @color;
+    padding: @gapSM;
+    margin-bottom: @gapSM;
+    .FloatEndgame;
+    h3 {
+        color: white;
+        background-color: @color;
+        padding: 3px @gapSM;
+        margin: -@gapSM -@gapSM @gapSM -@gapSM;
+    }
+    fieldset {
+        border-color: @color;
+        legend {
+            color: @color;
+            border-color: @color;
+        }
+    }
+}
+.block1 { .Block(rosybrown); }
+.block2 { .Block(cadetblue); }
+.block3 { .Block(darkkhaki); }
+.block4 { .Block(lightslategray); }
+.block5 { .Block(darkseagreen); }
+.block6 { .Block(silver); }
+
+/* Components */
+.admin-img {
+    img {
+        max-width: 400px;
+        max-height: 300px;
+        border: 1px solid silver;
+    }
+}
+
+pre {
+    code.language-json {
+        .json-key {
+            color: brown;
+        }
+        .json-value {
+            color: navy;
+        }
+        .json-string {
+            color: olive;
+        }
+    }
+}
+
+.label-standin {
+    label {
+        display: inline-block;
+        width: 120px;
+        text-align: right;
+    }
+}
+
+.admin-data {
+    width: 600px;
+}
+
+.rest-options {
+    background-color: whitesmoke;
+    border: 1px solid silver;
+    padding: @gapSM @gapLG;
+    margin: 3px 0 @gapLG 0;
+    label {
+        display: inline-block;
+        margin: 0 @gapMD 0 0;
+    }
+}
+.rest-actions {
+    display: none;
+    .rest-options {
+        display: none;
+    }
+}
+.rest-extras {
+    label {
+        display: inline-block;
+        margin-right: @gapSM;
+    }
+    #rest-id {
+        width: 60px;
+        margin-right: 60px;
+    }
+    #rest-params {
+        width: 300px;
+    }
+    #rest-url {
+        display: none;
+        float: left;
+        width: 600px;
+        background-color: honeydew;
+        border: 1px solid silver;
+        padding: @gapSM @gapMD;
+    }
+    #rest-submit {
+        display: none;
+        float: left;
+        margin: @gapSM 0 0 @gapXL;
+    }
+}
+.rest-responses {
+    .responses-url {
+        .Font16;
+        font-weight: bold;
+    }
+    pre {
+        .Font13;
+        background-color: ghostwhite;
+        border: 1px solid silver;
+        margin-bottom: @gapLG;
+    }
+}
